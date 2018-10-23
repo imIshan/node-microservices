@@ -3,7 +3,7 @@
 const request = require('superagent');
 
 function handleWithResponse(res) {
-    console.log('res ', res)
+    return res.entities
 }
 
 module.exports = function witClient(token) {
@@ -17,6 +17,7 @@ module.exports = function witClient(token) {
                 if (err) return cb(err);
                 if (res.statusCode != 200) return cb("Excepted status 200 but got " + res.stausCode)
                 const witResponse = handleWithResponse(res.body)
+                return cb(null,witResponse)
             })
     }
 

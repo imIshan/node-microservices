@@ -6,7 +6,7 @@ function handleOnAuthentication(rtmStartData) {
     console.log(`Logged in as ${rtmStartData.self.name} from the team ${rtmStartData.team.name}`);
 }
 
-function handleOnMessage(rtm, message, nlpClient) {
+function handleOnMessage(rtm, message, nlpClient, serviceRegistry) {
     if (message.text.toLowerCase().includes('iris')) {
         nlpClient.ask(message.text, (err, res) => {
             if (err) {
@@ -18,7 +18,7 @@ function handleOnMessage(rtm, message, nlpClient) {
                    throw new Error('Could not extract intent');
                 }
                 const intent = require('./intents/'+res.intent[0].value+'Intent')
-                intent.process(res, (error, response) => {
+                intent.process(res, serviceRegistry, (error, response) => {
                     if(error){
                         console.log(error.message);
                         return;
@@ -40,11 +40,11 @@ function addAuthenticationHandler(rtm, handler) {
     rtm.on('authenticated', handler)
 }
 
-const RtmClient = (token, logLevel, nlpClient) => {
+const RtmClient = (token, logLevel, nlpClient, serviceRegistry) => {
     const rtm = new RTMClient(token, { logLevel: logLevel });
     addAuthenticationHandler(rtm, handleOnAuthentication);
     rtm.on('message', (message) => {
-        handleOnMessage(rtm, message, nlpClient)
+        handleOnMessage(rtm, message, nlpClient, serviceRegistry)
     });
     return rtm
 }

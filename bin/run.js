@@ -10,7 +10,10 @@ const witClient = require('../server/witClient')(witToken);
 
 const slackToken = 'xoxb-448953290020-450187558583-94bHNdL26vo2HYbt8M6BnulC';
 const slackLogLevel = 'ERROR';
-const rtm = slackClient.RtmClient(slackToken, slackLogLevel, witClient);
+
+const serviceRegistry = service.get('serviceRegistry');
+const rtm = slackClient.RtmClient(slackToken, slackLogLevel, witClient, serviceRegistry);
+
 rtm.start();
 
 server.listen(3000);
